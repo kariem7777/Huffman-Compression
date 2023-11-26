@@ -40,33 +40,6 @@ class node implements Comparable<node>{
     }
 }
 
-
-class file{
-    private DataOutputStream f;
-    private DataInputStream ifile;
-
-    public   void saveTofile(File file,String text) throws IOException {
-        String s = file.getAbsolutePath();
-        f= new DataOutputStream(new FileOutputStream(s));
-        for(int i =0 ; i<s.length();++i){
-            f.writeChar(text.charAt(i));
-        }
-    };
-    public   String read(File file) throws IOException {
-        String name = file.getAbsolutePath();
-        String s="";
-        ifile= new DataInputStream(new FileInputStream(name));//01001101010101
-        while(true) {
-            try {
-                s +=ifile.readChar();
-            }
-            catch(EOFException eof) {
-                break;
-            }
-        }
-        return s;
-    };
-}
 public class HuffmanOperations {
     static Map<Character, String> encodeTb = new HashMap<Character, String>();
     static Map<String, Character> decodeTb = new HashMap<String, Character>();
