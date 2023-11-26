@@ -44,11 +44,21 @@ public class HuffmanCompressionGUI extends JFrame{
             binaryFile = fileChooser.getSelectedFile();
         }
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame("HuffmanCompressionGUI");
         frame.setContentPane(new HuffmanCompressionGUI().HoffmanCompression);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+        file f= new file();
+        String s="kariem";
+        String sa="11100011111011011111000000000100111101010101010101001";
+        String res = HuffmanOperations.Encode(s);
+        System.out.println(res);
+        file file = new file();
+        file.saveTofile(binaryFile,);
+//    res = huffmanoperations.decode(res);
+        System.out.println(file.read());
+
     }
 }
