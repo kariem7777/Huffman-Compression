@@ -60,6 +60,7 @@ public class HuffmanOperations {
         PriorityQueue<node> pq = new PriorityQueue<>();
         Map<Character, Integer> charFreq = HuffmanOperations.CalculateFrequency(s);
         charFreq.forEach((key, value) -> pq.add(new node(key, value)));
+
         while (pq.size() > 1) {
             pq.add(new node(pq.poll(), pq.poll()));
         }
@@ -68,8 +69,13 @@ public class HuffmanOperations {
 
     public static void generateTb(node root, String s) {
         if (root.left == null && root.right == null) {
-            encodeTb.put(root.getLetter(), s);
-            decodeTb.put(s, root.getLetter());
+            if(s==""){
+                encodeTb.put(root.getLetter(), "0");
+                decodeTb.put("0", root.getLetter());
+            }else{
+                encodeTb.put(root.getLetter(), s);
+                decodeTb.put(s, root.getLetter());
+            }
         } else {
             generateTb(root.left, s.concat("0"));
             generateTb(root.right, s.concat("1"));
