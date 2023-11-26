@@ -3,25 +3,25 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 class node implements Comparable<node>{
-    private int frq;
+    private final int frequency;
     private char letter;
     node left,right;
     public node(node left, node right) {
-        this.frq = left.getFrq()+right.getFrq();
+        this.frequency = left.getFrequency()+right.getFrequency();
         this.left = left;
         this.right = right;
     }
 
     public node(char l,int frq) {
         this.letter=l;
-        this.frq=frq;
+        this.frequency =frq;
         left =null;
         right=null;
     }
 
     @Override
     public int compareTo(node o) {
-        return Integer.compare(frq,o.frq);
+        return Integer.compare(frequency,o.frequency);
     }
 
 
@@ -30,8 +30,8 @@ class node implements Comparable<node>{
         this.letter = letter;
     }
 
-    public int getFrq() {
-        return frq;
+    public int getFrequency() {
+        return frequency;
     }
 
     public char getLetter() {
@@ -40,11 +40,11 @@ class node implements Comparable<node>{
 }
 
 
-class huffmanoperations {
+public class HuffmanOperations {
     static Map<Character, String> encodeTb = new HashMap<Character, String>();
     static Map<String, Character> decodeTb = new HashMap<String, Character>();
 
-    public static Map<Character, Integer> calcfreq(String s) {
+    public static Map<Character, Integer> CalculateFrequency(String s) {
         Map<Character, Integer> freq = new HashMap<Character, Integer>();
         for (int i = 0; i < s.length(); i++) {
             if (freq.containsKey(s.charAt(i))) {
@@ -56,9 +56,9 @@ class huffmanoperations {
         return freq;
     }
 
-    public static node formHuffmanTree(String s) {
+    public static node FormHuffmanTree(String s) {
         PriorityQueue<node> pq = new PriorityQueue<>();
-        Map<Character, Integer> charFreq = huffmanoperations.calcfreq(s);
+        Map<Character, Integer> charFreq = HuffmanOperations.CalculateFrequency(s);
         charFreq.forEach((key, value) -> pq.add(new node(key, value)));
         while (pq.size() > 1) {
             pq.add(new node(pq.poll(), pq.poll()));
@@ -76,8 +76,8 @@ class huffmanoperations {
         }
     }
 
-    public static String encode(String s) {
-        node r = formHuffmanTree(s);
+    public static String Encode(String s) {
+        node r = FormHuffmanTree(s);
         generateTb(r, "");
         String res = "";
         for (int i = 0; i < s.length(); ++i) {
@@ -88,7 +88,7 @@ class huffmanoperations {
 
     }
 
-    public static String decode(String s) {
+    public static String Decode(String s) {
         String temp = "", res = "";
         for (int i = 0; i < s.length(); ++i) {
             temp += s.charAt(i);
@@ -102,15 +102,4 @@ class huffmanoperations {
 
     }
 
-}
-
-public class Main {
-    public static void main(String[] args) {
-
-    String s="bigbobbitesbananas";
-    String sa="11100011111011011111000000000100111101010101010101001";
-    String res = huffmanoperations.encode(s);
-    res = huffmanoperations.decode(res);
-    System.out.println(res);
-    }
 }
