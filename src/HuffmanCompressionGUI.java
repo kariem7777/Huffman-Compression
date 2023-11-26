@@ -1,5 +1,7 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -27,6 +29,7 @@ public class HuffmanCompressionGUI extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 readData.setText(HuffmanOperations.Encode(readData.getText()));
+                LoadJTable();
             }
         });
         decodeButton.addActionListener(new ActionListener() {
@@ -43,16 +46,29 @@ public class HuffmanCompressionGUI extends JFrame{
         int returnValue = fileChooser.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             binaryFile = fileChooser.getSelectedFile();
-
             try {readData.setText(fileManager.Read(binaryFile));} catch (IOException ioe) {
 
             }
+            LoadJTable();
         }
     }
     private void SaveToFileButtonPerformed(ActionEvent e) {
         try {fileManager.SaveToFile(binaryFile,readData.getText(),HuffmanOperations.encodeTb);} catch (IOException ioe) {
 
         }
+    }
+    private void LoadJTable() {
+        int size = HuffmanOperations.encodeTb.size();
+        String[] header = {"Character", "Code"};
+        String[][] data = new String[size][2];
+        final int[] i = {0};
+        HuffmanOperations.encodeTb.forEach((key, value) -> {
+            String[] dataField = {String.valueOf(key),value};
+            data[i[0]] = dataField;
+            i[0]++;
+        });
+        DefaultTableModel defaultTableModel = new DefaultTableModel(data,header);
+        hoffmanTable.setModel(defaultTableModel);
     }
     public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame("HuffmanCompressionGUI");

@@ -78,6 +78,8 @@ public class HuffmanOperations {
 
     public static String Encode(String s) {
         node r = FormHuffmanTree(s);
+        encodeTb.clear();
+        decodeTb.clear();
         generateTb(r, "");
         String res = "";
         for (int i = 0; i < s.length(); ++i) {

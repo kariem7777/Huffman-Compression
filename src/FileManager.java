@@ -25,9 +25,6 @@ public class FileManager {
             }
         });
 
-
-
-
     };
     public String Read(File file) throws IOException {
         String name = file.getAbsolutePath();
