@@ -50,7 +50,7 @@ public class HuffmanCompressionGUI extends JFrame{
         }
     }
     private void SaveToFileButtonPerformed(ActionEvent e) {
-        try {fileManager.SaveToFile(binaryFile,readData.getText());} catch (IOException ioe) {
+        try {fileManager.SaveToFile(binaryFile,readData.getText(),HuffmanOperations.encodeTb);} catch (IOException ioe) {
 
         }
     }
@@ -60,15 +60,7 @@ public class HuffmanCompressionGUI extends JFrame{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-//        file f= new file();
-//        String s="kariem";
-//        String sa="11100011111011011111000000000100111101010101010101001";
-//        String res = HuffmanOperations.Encode(s);
-//        System.out.println(res);
-//        file file = new file();
-//        file.saveTofile(binaryFile,);
-//    res = huffmanoperations.decode(res);
-        //System.out.println(file.read());
+
 
     }
 }
