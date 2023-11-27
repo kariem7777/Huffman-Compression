@@ -18,11 +18,11 @@ public class HuffmanCompressionGUI extends JFrame{
         encodeFileChooser = new JFileChooser();
         fileManager = new FileManager();
         encodeFileChooser.setCurrentDirectory(new File("C:\\temp"));
-        encodeFileChooser.setFileFilter(new FileNameExtensionFilter("Binary Files","txt"));
+        encodeFileChooser.setFileFilter(new FileNameExtensionFilter("Text Files","txt"));
 
         decodeFileChooser = new JFileChooser();
         decodeFileChooser.setCurrentDirectory(new File("C:\\temp"));
-        decodeFileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "bin"));
+        decodeFileChooser.setFileFilter(new FileNameExtensionFilter("Binary Files", "bin"));
         encodeButton.addActionListener(this::EncodeButtonPerformed);
         decodeButton.addActionListener(this::DecodeButtonPerformed);
 
@@ -37,9 +37,9 @@ public class HuffmanCompressionGUI extends JFrame{
             try {
                 String content = Files.readString(filePath);
                 String encodedText = HuffmanOperations.Encode(content);
-                fileManager.SaveToBinaryFile(encodedText,HuffmanOperations.encodeTb);
+                fileManager.SaveToBinaryFile(encodedText);
             } catch (IOException ioe) {
-
+                System.out.println("Failed To Encode");
             }
         }
     }
@@ -55,7 +55,7 @@ public class HuffmanCompressionGUI extends JFrame{
                 String decodedText = HuffmanOperations.Decode(content);
                 fileManager.SaveToTxtFile(decodedText);
             } catch (IOException ioe) {
-
+                System.out.println("Failed To Decode");
             }
         }
     }

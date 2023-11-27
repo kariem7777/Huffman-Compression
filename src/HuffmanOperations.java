@@ -41,6 +41,7 @@ class node implements Comparable<node>{
 }
 
 public class HuffmanOperations {
+    static Map<Character, Integer> charFreq = new HashMap<>();
     static Map<Character, String> encodeTb = new HashMap<Character, String>();
     static Map<String, Character> decodeTb = new HashMap<String, Character>();
 
@@ -56,9 +57,8 @@ public class HuffmanOperations {
         return freq;
     }
 
-    public static node FormHuffmanTree(String s) {
+    public static node FormHuffmanTree() {
         PriorityQueue<node> pq = new PriorityQueue<>();
-        Map<Character, Integer> charFreq = HuffmanOperations.CalculateFrequency(s);
         charFreq.forEach((key, value) -> pq.add(new node(key, value)));
 
         while (pq.size() > 1) {
@@ -83,7 +83,8 @@ public class HuffmanOperations {
     }
 
     public static String Encode(String s) {
-        node r = FormHuffmanTree(s);
+        charFreq = HuffmanOperations.CalculateFrequency(s);
+        node r = FormHuffmanTree();
         encodeTb.clear();
         decodeTb.clear();
         generateTb(r, "");

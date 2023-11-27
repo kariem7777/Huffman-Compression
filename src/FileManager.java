@@ -3,24 +3,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileManager {
-    private DataOutputStream f;
-    private DataInputStream ifile;
+    private FileOutputStream fileOutputStream;
+    private FileInputStream fileInputStream;
 
-    public void SaveToBinaryFile(String text, Map<Character,String> tb) throws IOException {
+    public void SaveToBinaryFile(String text) throws IOException {
         String s;
         s = "Output.bin";
-        f= new DataOutputStream(new FileOutputStream(s));
-        f.writeUTF(text);
-        tb.forEach((key, value) -> {
+        fileOutputStream = new FileOutputStream(s);
+        int previousTextLength = text.length();
+        if (text.length() % 8 != 0) {
+            for (int i = 0; i < text.length() % 8; i++) {
+                text = "0" + text;
+            }
+        }
+        String[] substrings = new String[text.length()/8];
+        fileOutputStream.write(previousTextLength);
+        fileOutputStream.write(text.length()/8);
+        for (int i = 0; i < text.length() / 8; i++) {
+            int count = i*8;
+            substrings[i] = text.substring(count,count+8);
+        }
+        for(int i = 0; i < text.length() / 8; i++) {
+            int DecimalSubstring = Integer.parseInt(substrings[i], 2);
+            fileOutputStream.write(DecimalSubstring);
+        }
+        HuffmanOperations.charFreq.forEach((key,value) -> {
             try {
-                f.writeChar(key);
-                f.writeUTF(value);
+                fileOutputStream.write(key);
+                fileOutputStream.write(value);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-
-    };
+     };
     public void SaveToTxtFile(String text) {
         String s = "Output.txt";
 
@@ -34,37 +49,26 @@ public class FileManager {
         }
     }
     public String Read(File file) throws IOException {
-        String name = file.getAbsolutePath();
-        String s="";
-        ifile= new DataInputStream(new FileInputStream(name));//01001101010101
-//        while(true) {
-//            try {
-//                s +=ifile.readChar();
-//            }
-//            catch(EOFException eof) {
-//                break;
-//            }
-//        }
-        s +=ifile.readUTF();
-        Map<Character, String> eencodetb= new HashMap<>();
-        Map<String, Character> ddecodetb= new HashMap<>();
-        char c;
-        String tmp;
-        while(true){
-            try {
-                c=ifile.readChar();
-                tmp= ifile.readUTF();
-                eencodetb.put(c,tmp);
-                ddecodetb.put(tmp,c);
-            }
-            catch(EOFException eof) {
-                break;
-            }
+        fileInputStream = new FileInputStream(file.getAbsolutePath());
+        int actualCodeLength = fileInputStream.read();
+        int numberOfBytes = fileInputStream.read();
+        StringBuilder encodedText = new StringBuilder();
+        for (int i = 0; i < numberOfBytes; i++) {
+            //the following code ensures that the function doesn't neglect any trailing zeroes
+            encodedText.append(String.format("%8s", Integer.toBinaryString(fileInputStream.read())).replace(' ', '0'));
+
         }
-        HuffmanOperations.encodeTb=eencodetb;
-        HuffmanOperations.decodeTb=ddecodetb;
 
-
-        return s;
+        int binaryLength = encodedText.length();
+        int trailingZeros = binaryLength - actualCodeLength;
+        encodedText = new StringBuilder(encodedText.substring(trailingZeros));
+        int FreqKey;
+        while ((FreqKey = fileInputStream.read()) != -1) {
+            int value = fileInputStream.read();
+            HuffmanOperations.charFreq.put((char) FreqKey,value);
+        }
+        node tree = HuffmanOperations.FormHuffmanTree();
+        HuffmanOperations.generateTb(tree,"");
+        return encodedText.toString();
     };
 }
