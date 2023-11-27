@@ -6,14 +6,9 @@ public class FileManager {
     private DataOutputStream f;
     private DataInputStream ifile;
 
-    public   void SaveToFile(File file, String text, Map<Character,String> tb) throws IOException {
+    public void SaveToBinaryFile(String text, Map<Character,String> tb) throws IOException {
         String s;
-        if (file != null) {
-             s = file.getAbsolutePath();
-        }
-        else {
-            s = "Output.bin";
-        }
+        s = "Output.bin";
         f= new DataOutputStream(new FileOutputStream(s));
         f.writeUTF(text);
         tb.forEach((key, value) -> {
@@ -26,6 +21,18 @@ public class FileManager {
         });
 
     };
+    public void SaveToTxtFile(String text) {
+        String s = "Output.txt";
+
+        try {
+            FileWriter writer = new FileWriter(s);
+            writer.write(text);
+            writer.close();
+            System.out.println("Text successfully written to " + s);
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
     public String Read(File file) throws IOException {
         String name = file.getAbsolutePath();
         String s="";

@@ -1,75 +1,65 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class HuffmanCompressionGUI extends JFrame{
-    JFileChooser fileChooser;
+    JFileChooser encodeFileChooser;
+    JFileChooser decodeFileChooser;
     FileManager fileManager;
-    private File binaryFile;
-    private JTable hoffmanTable;
     private JButton decodeButton;
     private JButton encodeButton;
-    private JTextField readData;
     private JPanel HoffmanCompression;
-    private JButton openFileButton;
-    private JButton saveToFileButton;
 
     public HuffmanCompressionGUI() {
-        fileChooser = new JFileChooser();
+        encodeFileChooser = new JFileChooser();
         fileManager = new FileManager();
-        fileChooser.setCurrentDirectory(new File("C:\\temp"));
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Binary Files","bin"));
+        encodeFileChooser.setCurrentDirectory(new File("C:\\temp"));
+        encodeFileChooser.setFileFilter(new FileNameExtensionFilter("Binary Files","txt"));
 
-        encodeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                readData.setText(HuffmanOperations.Encode(readData.getText()));
-                LoadJTable();
-            }
-        });
-        decodeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                readData.setText(HuffmanOperations.Decode(readData.getText()));
-            }
-        });
-        openFileButton.addActionListener(this::OpenFileButtonPerformed);
-        saveToFileButton.addActionListener(this::SaveToFileButtonPerformed);
+        decodeFileChooser = new JFileChooser();
+        decodeFileChooser.setCurrentDirectory(new File("C:\\temp"));
+        decodeFileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "bin"));
+        encodeButton.addActionListener(this::EncodeButtonPerformed);
+        decodeButton.addActionListener(this::DecodeButtonPerformed);
+
     }
 
-    private void OpenFileButtonPerformed(ActionEvent e) {
-        int returnValue = fileChooser.showOpenDialog(this);
+    private void EncodeButtonPerformed(ActionEvent e) {
+        File textFile;
+        int returnValue = encodeFileChooser.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            binaryFile = fileChooser.getSelectedFile();
-            try {readData.setText(fileManager.Read(binaryFile));} catch (IOException ioe) {
+            textFile = encodeFileChooser.getSelectedFile();
+            Path filePath = Path.of(textFile.getPath());
+            try {
+                String content = Files.readString(filePath);
+                String encodedText = HuffmanOperations.Encode(content);
+                fileManager.SaveToBinaryFile(encodedText,HuffmanOperations.encodeTb);
+            } catch (IOException ioe) {
 
             }
-            LoadJTable();
         }
     }
-    private void SaveToFileButtonPerformed(ActionEvent e) {
-        try {fileManager.SaveToFile(binaryFile,readData.getText(),HuffmanOperations.encodeTb);} catch (IOException ioe) {
 
+    private void DecodeButtonPerformed(ActionEvent e) {
+        File binaryFile;
+        int returnValue = decodeFileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            binaryFile = decodeFileChooser.getSelectedFile();
+            Path filePath = Path.of(binaryFile.getPath());
+            try {
+                String content = fileManager.Read(binaryFile);
+                String decodedText = HuffmanOperations.Decode(content);
+                fileManager.SaveToTxtFile(decodedText);
+            } catch (IOException ioe) {
+
+            }
         }
     }
-    private void LoadJTable() {
-        int size = HuffmanOperations.encodeTb.size();
-        String[] header = {"Character", "Code"};
-        String[][] data = new String[size][2];
-        final int[] i = {0};
-        HuffmanOperations.encodeTb.forEach((key, value) -> {
-            String[] dataField = {String.valueOf(key),value};
-            data[i[0]] = dataField;
-            i[0]++;
-        });
-        DefaultTableModel defaultTableModel = new DefaultTableModel(data,header);
-        hoffmanTable.setModel(defaultTableModel);
-    }
+
     public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame("HuffmanCompressionGUI");
         frame.setContentPane(new HuffmanCompressionGUI().HoffmanCompression);
